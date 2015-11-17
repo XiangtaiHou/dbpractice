@@ -85,7 +85,6 @@ void studentMenu(char* username) {
     //query
     char q[150] = "\0";
     
-    // display student name
     MYSQL_RES *res_set;
     MYSQL_ROW row;
     
@@ -103,13 +102,32 @@ void studentMenu(char* username) {
     get_year(&y);
     semester = get_semester(m);
     
-    printf("\t\t\t+--------------------------------+\n");
-    printf("\t\t\t                                \n");
-    printf("\t\t\t     Hi, %s ！              \n", row[0]);
-    printf("\t\t\t                                \n");
-    printf("\t\t\t     %s, %d                 \n", semester, y);
-    printf("\t\t\t                                \n");
-    printf("\t\t\t+--------------------------------+\n");
+    printf("\t\t\t+-------------------------------------+\n\n");
+    printf("\t\t\tHi, %s\n", row[0]);
+    
+    printf("\n\t\t\t%s, %d\n", semester, y);
+    q[0] = '\0';
+    
+    MYSQL_RES *res_set2;
+    MYSQL_ROW row2;
+    
+    strcat(q, "select u.UoSName from unitofstudy u, transcript t where u.UoSCode = t.UoSCode and t.Studid = 3213 and t.Semester = 'Q1' and t.Year = 2015; ");
+    
+    mysql_query(connection,q);
+    res_set2 = mysql_store_result(connection);
+    int numrows = (int)mysql_num_rows(res_set2);
+    
+    for (int i = 0; i < numrows; i++)
+    {
+        row2 = mysql_fetch_row(res_set2);
+        if( row2 != NULL )
+        {
+            printf("\t\t\t%s\n", row2[0]);
+
+        }
+    }
+    
+    printf("\n\t\t\t+-------------------------------------+\n");
     
     //free?
     if(semester != NULL) {
@@ -118,24 +136,24 @@ void studentMenu(char* username) {
     }
     
     // free resources
-    mysql_free_result( res_set );
+    mysql_free_result(res_set);
+    mysql_free_result(res_set2);
+    
     
     
     
     do
     {
-        printf("\n\t\t\t----------------------------------\n");
-        printf("\t\t\t|         Student Menu           |\n");
-        printf("\t\t\t----------------------------------\n");
-        printf("\t\t\t|                                |\n");
-        printf("\t\t\t|    [1]Transcript               |\n");
-        printf("\t\t\t|    [2]Enroll Class             |\n");
-        printf("\t\t\t|    [3]Withdraw Class           |\n");
-        printf("\t\t\t|    [4]Personal Details         |\n");
-        printf("\t\t\t|    [5]Logout                   |\n");
-        printf("\t\t\t|    [0]Exit                     |\n");
-        printf("\t\t\t|                                |\n");
-        printf("\t\t\t----------------------------------\n\n");
+        printf("\t\t\t---------------------------------------\n");
+        printf("\t\t\t           Student Menu           \n");
+        printf("\t\t\t---------------------------------------\n");
+        printf("\t\t\t    [1]Transcript               \n");
+        printf("\t\t\t    [2]Enroll Class             \n");
+        printf("\t\t\t    [3]Withdraw Class           \n");
+        printf("\t\t\t    [4]Personal Details         \n");
+        printf("\t\t\t    [5]Logout                   \n");
+        printf("\t\t\t    [0]Exit                     \n");
+        printf("\t\t\t---------------------------------------\n\n");
         printf("Please enter the command: ");
         scanf("%d", &z);
         //system("color 2f");
