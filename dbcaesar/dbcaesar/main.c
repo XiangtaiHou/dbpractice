@@ -106,12 +106,14 @@ void studentMenu(char* username) {
     printf("\t\t\tHi, %s\n", row[0]);
     
     printf("\n\t\t\t%s, %d\n", semester, y);
-    q[0] = '\0';
+    memset(q, 0, sizeof(q));
     
     MYSQL_RES *res_set2;
     MYSQL_ROW row2;
     
-    strcat(q, "select u.UoSName from unitofstudy u, transcript t where u.UoSCode = t.UoSCode and t.Studid = 3213 and t.Semester = 'Q1' and t.Year = 2015; ");
+//    strcat(q, "select u.UoSName from unitofstudy u, transcript t where u.UoSCode = t.UoSCode and t.Studid = 3213 and t.Semester = 'Q1' and t.Year = 2015; ");
+    sprintf(q, "select u.UoSName from unitofstudy u, transcript t where u.UoSCode = t.UoSCode and t.Studid = %s and t.Semester = '%s' and t.Year = %d;", username, semester, y);
+    //puts(q);
     
     mysql_query(connection,q);
     res_set2 = mysql_store_result(connection);
