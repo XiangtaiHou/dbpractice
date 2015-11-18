@@ -282,35 +282,20 @@ void enroll(char * username) {
             break;
         }
         else {
-            memset(q, 0, sizeof(q));
-            MYSQL_RES *res_set2;
-            MYSQL_ROW row2;
-            sprintf(q, "select t.UoSCode, u.uosname, o.year, o.semester, o.Enrollment, o.MaxEnrollment, f.name, t.grade from uosoffering o, transcript t, unitofstudy u, faculty f where t.UoSCode = o.UoSCode and f.id = o.instructorid and t.uoscode = u.uoscode and t.semester = o.semester and t.year = o.year and t.studid = %s and t.uoscode = '%s';", username, z);
-            //puts(q);
-            mysql_query(connection,q);
-            res_set2 = mysql_store_result(connection);
+            //call procedure enrollclass here
             
-            int numrows = (int)mysql_num_rows(res_set2);
             
-            for (int i = 0; i < numrows; i++)
-            {
-                row2 = mysql_fetch_row(res_set2);
-                if( row2 != NULL )
-                {
-                    printf("\n\t\t\t\tcourse number: %s\n", row2[0]);
-                    printf("\t\t\t\ttitle: %s\n", row2[1]);
-                    printf("\t\t\t\tyear: %s\n", row2[2]);
-                    printf("\t\t\t\tquarter: %s\n", row2[3]);
-                    printf("\t\t\t\tenrollment: %s\n", row2[4]);
-                    printf("\t\t\t\tcapacity: %s\n", row2[5]);
-                    printf("\t\t\t\tlecturer: %s\n", row2[6]);
-                    printf("\t\t\t\tgrade: %s\n", row2[7]);
-                    
-                }
-            }
-            if (numrows == 0) {
-                printf("\nInvalid course number.\n");
-            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+            
         }
     }
     while(1);
@@ -374,37 +359,20 @@ void withdraw(char * username) {
             break;
         }
         else {
-            memset(q, 0, sizeof(q));
-            MYSQL_RES *res_set2;
-            MYSQL_ROW row2;
-            sprintf(q, "select t.UoSCode, u.uosname, o.year, o.semester, o.Enrollment, o.MaxEnrollment, f.name, t.grade from uosoffering o, transcript t, unitofstudy u, faculty f where t.UoSCode = o.UoSCode and f.id = o.instructorid and t.uoscode = u.uoscode and t.semester = o.semester and t.year = o.year and t.studid = %s and t.uoscode = '%s';", username, z);
-            //puts(q);
-            mysql_query(connection,q);
-            res_set2 = mysql_store_result(connection);
+        //call procedure withdraw here
             
-            int numrows = (int)mysql_num_rows(res_set2);
             
-            for (int i = 0; i < numrows; i++)
-            {
-                row2 = mysql_fetch_row(res_set2);
-                if( row2 != NULL )
-                {
-                    printf("\n\t\t\t\tcourse number: %s\n", row2[0]);
-                    printf("\t\t\t\ttitle: %s\n", row2[1]);
-                    printf("\t\t\t\tyear: %s\n", row2[2]);
-                    printf("\t\t\t\tquarter: %s\n", row2[3]);
-                    printf("\t\t\t\tenrollment: %s\n", row2[4]);
-                    printf("\t\t\t\tcapacity: %s\n", row2[5]);
-                    printf("\t\t\t\tlecturer: %s\n", row2[6]);
-                    printf("\t\t\t\tgrade: %s\n", row2[7]);
-                    
-                }
-            }
-            if (numrows == 0) {
-                printf("\nInvalid course number.\n");
-            }
-            //free resources
-            mysql_free_result(res_set2);
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
         }
     }
     while(1);
@@ -469,10 +437,31 @@ void personaldetail(char * username) {
         else if(strcmp(z,"1")){
             printf("\nPlease enter the new password: ");
             scanf("%s", np);
+            //call procedure change password here
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
         }
         else if(strcmp(z, "2")){
             printf("\nPlease enter the new address: ");
             scanf("%s", na);
+            //call procedure chage address here
+            
+            
+            
+            
+            
+            
+            
+            
         }
         else {
             printf("INVALID COMMAND.\n");
