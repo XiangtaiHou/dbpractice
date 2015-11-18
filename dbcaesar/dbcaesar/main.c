@@ -81,7 +81,7 @@ void transcript(char* username) {
     printf("\t\t\t              Transcript               \n");
     printf("\t\t\t---------------------------------------\n");
     //query
-    char q[200] = "\0";
+    char q[500] = "\0";
     MYSQL_RES *res_set;
     MYSQL_ROW row;
     sprintf(q, "select t.semester, u.UoSCode, t.grade, u.UoSName from unitofstudy u, transcript t where u.UoSCode = t.UoSCode and t.Studid = %s order by t.semester;", username);
@@ -97,7 +97,7 @@ void transcript(char* username) {
         {
             printf("\t%s ", row[0]);
             printf("\t%s ", row[1]);
-            printf("\t%-5s", row[2]);
+            printf("\t%-10s", row[2]);
             printf("\t%s\n", row[3]);
             
         }
@@ -109,7 +109,7 @@ void transcript(char* username) {
         printf("\n\t\t\t---------------------------------------\n");
         printf("\t\t\t           Commands List           \n");
         printf("\t\t\t---------------------------------------\n");
-        printf("\t\t\t  [course number]check course details  \n");
+        printf("\t\t\t  [course number]Check course details  \n");
         printf("\t\t\t  [0]Back to main menu                 \n");
         printf("\t\t\t---------------------------------------\n\n");
         printf("Please enter the command: ");
@@ -123,24 +123,36 @@ void transcript(char* username) {
             memset(q, 0, sizeof(q));
             MYSQL_RES *res_set2;
             MYSQL_ROW row2;
-            sprintf(q, "select u.UoSName from unitofstudy u, transcript t where u.UoSCode = t.UoSCode and t.Studid = %s and t.Semester = '%s' and t.Year = %d;", username, semester, y);
+            sprintf(q, "select t.UoSCode, u.uosname, o.year, o.semester, o.Enrollment, o.MaxEnrollment, f.name, t.grade from uosoffering o, transcript t, unitofstudy u, faculty f where t.UoSCode = o.UoSCode and f.id = o.instructorid and t.uoscode = u.uoscode and t.semester = o.semester and t.year = o.year and t.studid = %s and t.uoscode = '%s';", username, z);
             //puts(q);
-            
             mysql_query(connection,q);
             res_set2 = mysql_store_result(connection);
-            int numrows = (int)mysql_num_rows(res_set2);
-            
-            for (int i = 0; i < numrows; i++)
-            {
-                row2 = mysql_fetch_row(res_set2);
-                if( row2 != NULL )
+
+                int numrows = (int)mysql_num_rows(res_set2);
+                
+                for (int i = 0; i < numrows; i++)
                 {
-                    printf("\t\t\t%s\n", row2[0]);
-                    
+                    row2 = mysql_fetch_row(res_set2);
+                    if( row2 != NULL )
+                    {
+                        printf("\n\t\t\t\tcourse number: %s\n", row2[0]);
+                        printf("\t\t\t\ttitle: %s\n", row2[1]);
+                        printf("\t\t\t\tyear: %s\n", row2[2]);
+                        printf("\t\t\t\tquarter: %s\n", row2[3]);
+                        printf("\t\t\t\tenrollment: %s\n", row2[4]);
+                        printf("\t\t\t\tcapacity: %s\n", row2[5]);
+                        printf("\t\t\t\tlecturer: %s\n", row2[6]);
+                        printf("\t\t\t\tgrade: %s\n", row2[7]);
+                        
+                    }
+                }
+                if (numrows == 0) {
+                    printf("\nInvalid course number.\n");
                 }
             }
+
             
-        }
+        
    
     }
     while(1);
