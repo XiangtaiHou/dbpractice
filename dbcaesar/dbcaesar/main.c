@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 //variables
 MYSQL *connection, mysql;
 
@@ -27,6 +26,9 @@ void loginStudent();
 void studentMenu(char * username);
 void transcript(char * username);
 void enroll(char * username);
+void withdraw(char * username);
+void personaldetail(char * username);
+void logoutStudent(char * username);
 
 //clock
 void get_month( int * month) {
@@ -100,7 +102,7 @@ int get_yearofnextsemester(int year, char * semester) {
 }
 
 //transcript screen
-void transcript(char* username) {
+void transcript(char * username) {
     printf("\n\t\t\t---------------------------------------\n");
     printf("\t\t\t              Transcript               \n");
     printf("\t\t\t---------------------------------------\n");
@@ -316,10 +318,173 @@ void enroll(char * username) {
 }
 
 //withdraw screen
-void withdraw() {}
+void withdraw(char * username) {
+    printf("\n\t\t\t---------------------------------------\n");
+    printf("\t\t\t              Withdraw Class               \n");
+    printf("\t\t\t---------------------------------------\n");
+    
+    int m = 0, y = 0;
+    char * semester;
+    get_year(&y);
+    semester = get_semester(m);
 
-//logout
-void logoutStudent() {}
+    //print current quarter course list
+    printf("\tCurrent Registered classes: \n\n\t%s, %d\n\n", semester, y);
+    
+    //query
+    char q[500] = "\0";
+    MYSQL_RES *res_set;
+    MYSQL_ROW row;
+    
+    sprintf(q, "select t.uoscode, u.uosname, t.grade from transcript t, unitofstudy u where t.uoscode = u.uoscode and t.studid = %s and t.semester = '%s' and t.year = %d;",username , semester, y);
+    //puts(q);
+    mysql_query(connection,q);
+    res_set = mysql_store_result(connection);
+    int numrows = (int)mysql_num_rows(res_set);
+    // Display results
+
+    for (int i = 0; i < numrows; i++)
+    {
+        row = mysql_fetch_row(res_set);
+        
+        if( row != NULL )
+        {
+            printf("\t%s ", row[0]);
+            printf("\t%-40s ", row[1]);
+            printf("\t%s\n", row[2]);
+            
+        }
+    }
+    //free resources
+    mysql_free_result(res_set);
+    
+    char z[20];
+    do {
+        printf("\n\t\t\t---------------------------------------\n");
+        printf("\t\t\t           Commands List           \n");
+        printf("\t\t\t---------------------------------------\n");
+        printf("\t\t\t  [course number]Withdraw a class\n");
+        printf("\t\t\t  [0]Back to main menu                 \n");
+        printf("\t\t\t---------------------------------------\n\n");
+        printf("Please enter the command: ");
+        scanf("%s", z);
+        //system("color 2f");
+        if(strcmp(z, "0") == 0) {
+            studentMenu(username);
+            break;
+        }
+        else {
+            memset(q, 0, sizeof(q));
+            MYSQL_RES *res_set2;
+            MYSQL_ROW row2;
+            sprintf(q, "select t.UoSCode, u.uosname, o.year, o.semester, o.Enrollment, o.MaxEnrollment, f.name, t.grade from uosoffering o, transcript t, unitofstudy u, faculty f where t.UoSCode = o.UoSCode and f.id = o.instructorid and t.uoscode = u.uoscode and t.semester = o.semester and t.year = o.year and t.studid = %s and t.uoscode = '%s';", username, z);
+            //puts(q);
+            mysql_query(connection,q);
+            res_set2 = mysql_store_result(connection);
+            
+            int numrows = (int)mysql_num_rows(res_set2);
+            
+            for (int i = 0; i < numrows; i++)
+            {
+                row2 = mysql_fetch_row(res_set2);
+                if( row2 != NULL )
+                {
+                    printf("\n\t\t\t\tcourse number: %s\n", row2[0]);
+                    printf("\t\t\t\ttitle: %s\n", row2[1]);
+                    printf("\t\t\t\tyear: %s\n", row2[2]);
+                    printf("\t\t\t\tquarter: %s\n", row2[3]);
+                    printf("\t\t\t\tenrollment: %s\n", row2[4]);
+                    printf("\t\t\t\tcapacity: %s\n", row2[5]);
+                    printf("\t\t\t\tlecturer: %s\n", row2[6]);
+                    printf("\t\t\t\tgrade: %s\n", row2[7]);
+                    
+                }
+            }
+            if (numrows == 0) {
+                printf("\nInvalid course number.\n");
+            }
+            //free resources
+            mysql_free_result(res_set2);
+        }
+    }
+    while(1);
+}
+
+//personal detail screen
+void personaldetail(char * username) {
+    printf("\n\t\t\t---------------------------------------\n");
+    printf("\t\t\t             Personal Details               \n");
+    printf("\t\t\t---------------------------------------\n\n");
+    
+
+    //query
+    char q[500] = "\0";
+    MYSQL_RES *res_set;
+    MYSQL_ROW row;
+    
+    sprintf(q, "select * from student where id = %s;",username);
+    //puts(q);
+    mysql_query(connection,q);
+    res_set = mysql_store_result(connection);
+    int numrows = (int)mysql_num_rows(res_set);
+    // Display results
+    printf("\t\t\tID: ");
+    printf("\tName:");
+    printf("\t\t\tPassword:");
+    printf("\tAddress:\n");
+    for (int i = 0; i < numrows; i++)
+    {
+        row = mysql_fetch_row(res_set);
+        
+        if( row != NULL )
+        {
+            printf("\t\t\t%s ", row[0]);
+            printf("\t%s ", row[1]);
+            printf("\t%s ", row[2]);
+            printf("\t%s\n", row[3]);
+            
+        }
+    }
+    //free resources
+    mysql_free_result(res_set);
+    
+    char z[20];
+    char np[20];
+    char na[30];
+    do {
+        printf("\n\t\t\t---------------------------------------\n");
+        printf("\t\t\t           Commands List           \n");
+        printf("\t\t\t---------------------------------------\n");
+        printf("\t\t\t  [1]Change password\n");
+        printf("\t\t\t  [2]Change address\n");
+        printf("\t\t\t  [0]Back to main menu                 \n");
+        printf("\t\t\t---------------------------------------\n\n");
+        printf("Please enter the command: ");
+        scanf("%s", z);
+        //system("color 2f");
+        if(strcmp(z, "0") == 0) {
+            studentMenu(username);
+            break;
+        }
+        else if(strcmp(z,"1")){
+            printf("\nPlease enter the new password: ");
+            scanf("%s", np);
+        }
+        else if(strcmp(z, "2")){
+            printf("\nPlease enter the new address: ");
+            scanf("%s", na);
+        }
+        else {
+            printf("INVALID COMMAND.\n");
+        }
+    }
+    while(1);
+}
+
+void logoutStudent(char * username) {
+
+    loginStudent();
+}
 
 //exit
 void exitSystem() {}
@@ -406,9 +571,9 @@ void studentMenu(char* username) {
             case 0 :return;
             case 1 :transcript(username);break;
             case 2 :enroll(username);break;
-            case 3 :withdraw();break;
-            case 4 :logoutStudent();break;
-            case 5 :exitSystem();break;
+            case 3 :withdraw(username);break;
+            case 4 :personaldetail(username);break;
+            case 5 :logoutStudent(username);break;
             default:printf("\n INVALID COMMAND");
         }
     }
@@ -427,11 +592,12 @@ void loginStudent() {
         MYSQL_RES *res_set;
         MYSQL_ROW row;
         printf("\nPlease enter student id: ");
-        gets(username);
+        scanf("%s", username);
         userid = atoi(username);
         
         printf("\nPlease enter password: ");
-        gets(password);
+        scanf("%s", password);
+
         
         strcat(q, "SELECT password FROM student where id = ");
         strcat(q, username);
