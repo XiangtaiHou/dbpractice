@@ -74,7 +74,6 @@ char* get_semester(int month) {
     }
     return sem;
 }
-
 //transcript screen
 void transcript(char* username) {
     printf("\n\t\t\t---------------------------------------\n");
@@ -150,10 +149,6 @@ void transcript(char* username) {
                     printf("\nInvalid course number.\n");
                 }
             }
-
-            
-        
-   
     }
     while(1);
 
