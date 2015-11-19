@@ -268,37 +268,58 @@ void enroll(char * username) {
     }
     //free resources
     mysql_free_result(res_set2);
+    
     char z[20];
     do {
         printf("\n\t\t\t---------------------------------------\n");
         printf("\t\t\t           Commands List           \n");
         printf("\t\t\t---------------------------------------\n");
-        printf("\t\t\t  [course number]Enroll a class\n");
+        printf("\t\t\t  [1]Enroll a class\n");
         printf("\t\t\t  [0]Back to main menu                 \n");
         printf("\t\t\t---------------------------------------\n\n");
         printf("Please enter the command: ");
         scanf("%s", z);
         //system("color 2f");
         if(strcmp(z, "0") == 0) {
-            studentMenu(username);
+            //studentMenu(username);
             break;
         }
-        else {
-            //call procedure enrollclass here
+        else if(strcmp(z, "1") == 0) {
+            char coursenumber[9];
+            int whichsemester;
+            memset(q, 0, sizeof(q));
+            MYSQL_RES *res_set3;
+            MYSQL_ROW row3;
+            printf("\nPlease enter course number: ");
+            scanf("%s", coursenumber);
             
+            printf("\nPlease choose current quarter or next quarter(input 1 for now, or 2 for next) : ");
+            scanf("%d", &whichsemester);
             
+            sprintf(q, "CALL enrollclass(%s, '%s', %d, '%s', %d);",
+                    username, semester, y, coursenumber, whichsemester);
+            // Display results
+            mysql_query(connection,q);
+            res_set3 = mysql_store_result(connection);
+            int numrows3 = (int)mysql_num_rows(res_set3);
             
-            
-            
-            
-            
-            
-            
-            
-            
-
+            for (int i = 0; i < numrows3; i++) {
+                row3 = mysql_fetch_row(res_set3);
+                if(row3 != NULL) {
+                    if (i == 0) {
+                        fprintf(stdout, "%s\n", row3[0]);
+                    }
+                    else {
+                        fprintf(stdout, "Prerequisites: %s   %s\n", row3[0], row3[1]);
+                    }
+                }
+            }
+            //free resources
+            mysql_free_result(res_set3);
             
         }
+        else
+            printf("INVALID COMMAND.");
     }
     while(1);
     
@@ -318,7 +339,7 @@ void withdraw(char * username) {
     //print current quarter course list
     printf("\tCurrent Registered classes: \n\n\t%s, %d\n\n", semester, y);
     
-    //query
+    //queryjj
     char q[500] = "\0";
     MYSQL_RES *res_set;
     MYSQL_ROW row;
@@ -357,19 +378,34 @@ void withdraw(char * username) {
         scanf("%s", z);
         //system("color 2f");
         if(strcmp(z, "0") == 0) {
-            studentMenu(username);
+            //studentMenu(username);
+            
             break;
         }
         else {
+            
         //call procedure withdraw here
             memset(q, 0, sizeof(q));
             MYSQL_RES *res_set2;
-            //MYSQL_ROW row2;
-            sprintf(q, "call withdraw(%s, '%s');", username, username);
+            MYSQL_ROW row2;
+            sprintf(q, "call withdraw(%s, '%s', '%s', %d);", username, z, semester, y);
             //puts(q);
             mysql_query(connection,q);
             res_set2 = mysql_store_result(connection);
+            int numrows2 = (int)mysql_num_rows(res_set);
+            // Display results
             
+            for (int i = 0; i < numrows2; i++)
+            {
+                row2 = mysql_fetch_row(res_set2);
+                
+                if( row2 != NULL )
+                {
+                    printf("\t%s\n", row2[0]);
+ 
+                }
+            }
+
             //free resources
             mysql_free_result(res_set2);
         }
