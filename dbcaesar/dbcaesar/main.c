@@ -176,6 +176,8 @@ void transcript(char * username) {
                 if (numrows == 0) {
                     printf("\nInvalid course number.\n");
                 }
+            //free resources
+            mysql_free_result(res_set2);
             }
     }
     while(1);
@@ -360,19 +362,16 @@ void withdraw(char * username) {
         }
         else {
         //call procedure withdraw here
+            memset(q, 0, sizeof(q));
+            MYSQL_RES *res_set2;
+            //MYSQL_ROW row2;
+            sprintf(q, "call withdraw(%s, '%s');", username, username);
+            //puts(q);
+            mysql_query(connection,q);
+            res_set2 = mysql_store_result(connection);
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+            //free resources
+            mysql_free_result(res_set2);
         }
     }
     while(1);
@@ -434,33 +433,43 @@ void personaldetail(char * username) {
             studentMenu(username);
             break;
         }
-        else if(strcmp(z,"1")){
+        else if(strcmp(z,"1") == 0){
             printf("\nPlease enter the new password: ");
             scanf("%s", np);
             //call procedure change password here
             
+            memset(q, 0, sizeof(q));
+            MYSQL_RES *res_set2;
+            //MYSQL_ROW row2;
+            sprintf(q, "call changepassword(%s, '%s');", username, np);
+            //puts(q);
+            mysql_query(connection,q);
+            res_set2 = mysql_store_result(connection);
             
+            //int numrows2 = (int)mysql_num_rows(res_set2);
             
-            
-            
-            
-            
-            
-            
-            
+            //free resources
+            mysql_free_result(res_set2);
             
         }
-        else if(strcmp(z, "2")){
+        else if(strcmp(z, "2") == 0){
+            
             printf("\nPlease enter the new address: ");
             scanf("%s", na);
             //call procedure chage address here
             
+            memset(q, 0, sizeof(q));
+            MYSQL_RES *res_set2;
+            //MYSQL_ROW row2;
+            sprintf(q, "call changeaddress(%s, '%s');", username, na);
+            //puts(q);
+            mysql_query(connection,q);
+            res_set2 = mysql_store_result(connection);
             
+            //int numrows2 = (int)mysql_num_rows(res_set2);
             
-            
-            
-            
-            
+            //free resources
+            mysql_free_result(res_set2);
             
         }
         else {
